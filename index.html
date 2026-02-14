@@ -10,9 +10,8 @@
       --rose:#ff5e7e;
       --bg1:#ff9a9e;
       --bg2:#fad0c4;
-      --bg3:#fbc2eb;
       --card:#ffffffee;
-      --ink:#2a2a2a;
+      --text:#2a2a2a;
     }
     *{box-sizing:border-box}
     body{
@@ -20,55 +19,45 @@
       height:100vh;
       overflow:hidden;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      color:var(--ink);
-      background: radial-gradient(circle at 20% 20%, var(--bg3), transparent 45%),
-                  radial-gradient(circle at 80% 30%, var(--bg2), transparent 50%),
-                  linear-gradient(135deg, var(--bg1), var(--bg2));
-      animation:bgShift 10s ease-in-out infinite alternate;
-    }
-    @keyframes bgShift{
-      0%{filter:hue-rotate(0deg)}
-      100%{filter:hue-rotate(18deg)}
-    }
-
-    .hearts{
-      position:fixed; inset:0;
-      pointer-events:none;
-      overflow:hidden;
-    }
-    .heart{
-      position:absolute;
-      font-size:18px;
-      opacity:0.9;
-      animation: floatUp linear forwards;
-      filter: drop-shadow(0 8px 10px rgba(0,0,0,.15));
-      user-select:none;
-    }
-    @keyframes floatUp{
-      0%{ transform:translateY(0) scale(.9) rotate(0deg); opacity:0; }
-      10%{ opacity:.95; }
-      100%{ transform:translateY(-120vh) scale(1.35) rotate(20deg); opacity:0; }
-    }
-
-    .wrap{
-      height:100vh;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.35), transparent 55%),
+        radial-gradient(circle at 80% 25%, rgba(255,255,255,.25), transparent 55%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
       display:flex;
       align-items:center;
       justify-content:center;
       padding:18px;
     }
+
+    /* Floating hearts */
+    .hearts{position:fixed; inset:0; pointer-events:none; overflow:hidden;}
+    .heart{
+      position:absolute;
+      font-size:18px;
+      opacity:.9;
+      filter: drop-shadow(0 10px 10px rgba(0,0,0,.12));
+      animation: floatUp linear forwards;
+      user-select:none;
+    }
+    @keyframes floatUp{
+      0%{transform:translateY(20px) scale(.9); opacity:0;}
+      10%{opacity:.95;}
+      100%{transform:translateY(-120vh) scale(1.25); opacity:0;}
+    }
+
+    /* Card */
     .card{
-      position:relative;
-      width:min(680px, 96vw);
+      width:min(720px, 96vw);
       background:var(--card);
-      border-radius:24px;
-      padding:26px 22px 22px;
-      box-shadow: 0 18px 55px rgba(0,0,0,.22);
+      border-radius:26px;
+      padding:26px 20px 20px;
+      box-shadow:0 18px 60px rgba(0,0,0,.22);
       backdrop-filter: blur(10px);
       border:1px solid rgba(255,255,255,.45);
       text-align:center;
+      position:relative;
     }
-
     .badge{
       display:inline-flex;
       gap:10px;
@@ -77,15 +66,14 @@
       border-radius:999px;
       background: rgba(255,45,85,.12);
       border:1px solid rgba(255,45,85,.18);
-      font-weight:600;
+      font-weight:700;
       margin-bottom:14px;
     }
-    .badge span{ color:var(--pink); }
-
+    .badge span{color:var(--pink)}
     h1{
-      margin:6px 0 8px;
-      font-size: clamp(28px, 4.2vw, 46px);
-      line-height:1.06;
+      margin:6px 0 10px;
+      font-size: clamp(28px, 4.5vw, 48px);
+      line-height:1.05;
       letter-spacing:-0.02em;
     }
     .sub{
@@ -94,71 +82,59 @@
       opacity:.9;
     }
 
-    .type{
-      display:inline-block;
-      border-right: 3px solid rgba(255,45,85,.7);
-      padding-right:6px;
-      white-space:nowrap;
-      overflow:hidden;
-      max-width: 100%;
-      animation: caret 0.85s steps(1) infinite;
-      font-weight:800;
-      color:var(--pink);
-    }
-    @keyframes caret { 50%{ border-color: transparent; } }
-
-    .btnRow{
-      display:flex;
-      gap:14px;
-      align-items:center;
-      justify-content:center;
-      flex-wrap:wrap;
-      margin-top:18px;
+    /* Buttons area */
+    .btnArea{
       position:relative;
-      min-height:64px;
+      width:min(520px, 92%);
+      margin: 16px auto 0;
+      height: 86px;            /* dedicated area so No can dodge safely */
     }
-    button{
+    .btn{
       border:none;
       padding:14px 22px;
       font-size:18px;
       border-radius:16px;
       cursor:pointer;
-      font-weight:800;
+      font-weight:900;
       transition: transform .15s ease, box-shadow .15s ease;
       user-select:none;
+      -webkit-tap-highlight-color: transparent;
     }
     #yesBtn{
+      position:absolute;
+      left: 10px;
+      top: 16px;
       background: linear-gradient(135deg, var(--pink), var(--rose));
-      color:white;
-      box-shadow: 0 10px 25px rgba(255,45,85,.35);
+      color:#fff;
+      box-shadow:0 12px 26px rgba(255,45,85,.35);
     }
-    #yesBtn:hover{ transform: translateY(-2px) scale(1.03); }
-    #yesBtn:active{ transform: translateY(1px) scale(.99); }
+    #yesBtn:hover{transform: translateY(-2px) scale(1.02);}
+    #yesBtn:active{transform: translateY(1px) scale(.99);}
 
     #noBtn{
-      background: rgba(60,60,60,.10);
-      color:#333;
-      border:1px solid rgba(0,0,0,.08);
       position:absolute;
-      left: 56%;
-      top: 0;
-      box-shadow: 0 10px 25px rgba(0,0,0,.12);
-    }
-
-    .hint{
-      margin-top:14px;
-      font-size: 14px;
-      opacity:.78;
+      right: 10px;
+      top: 16px;
+      background: rgba(40,40,40,.10);
+      color:#222;
+      border:1px solid rgba(0,0,0,.08);
+      box-shadow:0 12px 26px rgba(0,0,0,.12);
     }
 
     .toast{
       margin-top:14px;
-      font-size: clamp(16px, 2vw, 20px);
-      font-weight:800;
-      color:var(--pink);
       min-height:28px;
+      font-size: clamp(16px, 2vw, 20px);
+      font-weight:900;
+      color:var(--pink);
+    }
+    .hint{
+      margin-top:8px;
+      font-size: 13px;
+      opacity:.75;
     }
 
+    /* Modal */
     .overlay{
       position:fixed; inset:0;
       background: rgba(0,0,0,.55);
@@ -169,118 +145,62 @@
       z-index:50;
     }
     .modal{
-      width:min(720px, 96vw);
-      background: #fff;
-      border-radius:24px;
+      width:min(740px, 96vw);
+      background:#fff;
+      border-radius:26px;
       padding:24px;
       text-align:center;
-      box-shadow: 0 18px 70px rgba(0,0,0,.35);
-      position:relative;
-      overflow:hidden;
+      box-shadow:0 18px 80px rgba(0,0,0,.38);
     }
     .modal h2{
       margin:0 0 10px;
-      font-size: clamp(26px, 4vw, 42px);
-      color: var(--pink);
+      font-size: clamp(26px, 4vw, 44px);
+      color:var(--pink);
     }
     .modal p{
       margin:0 0 18px;
-      font-size: 18px;
+      font-size:18px;
       opacity:.92;
     }
-    .modal .actions{
-      display:flex;
-      gap:12px;
-      justify-content:center;
-      flex-wrap:wrap;
-    }
-    .ghost{
-      background:#f2f2f2;
-      color:#222;
-    }
+    .actions{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+    .ghost{background:#f2f2f2; color:#222;}
 
-    canvas#fx{
-      position:fixed; inset:0;
-      pointer-events:none;
-      z-index:60;
-    }
-
-    .sparkle{
-      position:absolute;
-      inset:-80px -80px auto auto;
-      width: 220px;
-      height: 220px;
-      background: radial-gradient(circle at 30% 30%, rgba(255,45,85,.30), transparent 55%),
-                  radial-gradient(circle at 70% 60%, rgba(255,180,200,.45), transparent 60%);
-      transform: rotate(18deg);
-      filter: blur(0px);
-      opacity:.8;
-      pointer-events:none;
-    }
+    /* Confetti canvas */
+    canvas#fx{position:fixed; inset:0; pointer-events:none; z-index:60;}
   </style>
 </head>
 <body>
   <div class="hearts" id="hearts"></div>
   <canvas id="fx"></canvas>
 
-  <div class="wrap">
-    <div class="card" id="card">
-      <div class="sparkle"></div>
-      <div class="badge">💘 For <span>Sury</span> (aka <span>sury cutie</span>)</div>
+  <div class="card" id="card">
+    <div class="badge">💘 For <span>Sury</span> (aka <span>sury cutie</span>)</div>
 
-      <h1>
-        <span class="type" id="type"></span>
-      </h1>
+    <h1>Will you be my Valentine, <span style="color:var(--pink)">Sury Cutie</span>? 💖</h1>
+    <p class="sub">I’m not asking… I’m presenting destiny 😌</p>
 
-      <p class="sub">I’m not asking… I’m presenting destiny 😌</p>
-
-      <div class="btnRow" id="btnRow">
-        <button id="yesBtn">YES 💖</button>
-        <button id="noBtn" aria-label="No">No 🙄</button>
-      </div>
-
-      <div class="toast" id="toast"></div>
-      <div class="hint">Tip: “No” is… not an option. Try anyway.</div>
+    <div class="btnArea" id="btnArea">
+      <button class="btn" id="yesBtn">YES 💘</button>
+      <button class="btn" id="noBtn">No 🙄</button>
     </div>
+
+    <div class="toast" id="toast"></div>
+    <div class="hint">Tip: “No” gets slippery. Try anyway.</div>
   </div>
 
   <div class="overlay" id="overlay">
     <div class="modal">
       <h2>Wait—are you REALLY sure? 😳</h2>
-      <p>Sury cutie… choosing “Yes” will cause extreme happiness, permanent butterflies, and unlimited cuddles.</p>
+      <p>Sury cutie… clicking “Yes” may cause permanent butterflies, nonstop smiling, and unlimited cuddles.</p>
       <div class="actions">
-        <button id="confirmYes" style="background:linear-gradient(135deg,var(--pink),var(--rose));color:#fff;">YES YES YES 💘</button>
-        <button id="closeModal" class="ghost">Let me think 🤔</button>
+        <button class="btn" id="confirmYes" style="background:linear-gradient(135deg,var(--pink),var(--rose));color:#fff;">YES YES YES 💖</button>
+        <button class="btn ghost" id="closeModal">Let me think 🤔</button>
       </div>
     </div>
   </div>
 
 <script>
-  // ---------- Dramatic typing ----------
-  const typeEl = document.getElementById("type");
-  const lines = [
-    "Will you be my Valentine,",
-    "Sury Cutie? 💖"
-  ];
-  let li = 0, ci = 0;
-  function typeNext(){
-    const current = lines[li];
-    typeEl.textContent = current.slice(0, ci);
-    ci++;
-    if(ci <= current.length){
-      setTimeout(typeNext, li === 0 ? 55 : 65);
-    } else {
-      if(li < lines.length - 1){
-        li++; ci = 0;
-        setTimeout(() => { typeEl.textContent += "\n"; typeNext(); }, 350);
-      } else {
-        typeEl.style.borderRight = "0";
-      }
-    }
-  }
-  typeNext();
-
-  // ---------- Floating hearts ----------
+  // ----- Hearts -----
   const hearts = document.getElementById("hearts");
   const heartChars = ["💖","💘","💗","💕","💞","💝"];
   function spawnHeart(){
@@ -290,179 +210,167 @@
     const size = 14 + Math.random()*26;
     h.style.fontSize = size + "px";
     h.style.left = (Math.random()*100) + "vw";
-    h.style.bottom = (-10 - Math.random()*20) + "px";
+    h.style.bottom = (-20 - Math.random()*30) + "px";
     h.style.animationDuration = (5 + Math.random()*4) + "s";
-    h.style.opacity = (0.55 + Math.random()*0.45);
     hearts.appendChild(h);
     setTimeout(() => h.remove(), 9500);
   }
+  for(let i=0;i<18;i++) setTimeout(spawnHeart, i*120);
   setInterval(spawnHeart, 180);
-  for(let i=0;i<16;i++) setTimeout(spawnHeart, i*120);
 
-  // ---------- The dodging NO button ----------
+  // ----- Buttons -----
+  const btnArea = document.getElementById("btnArea");
   const noBtn = document.getElementById("noBtn");
   const yesBtn = document.getElementById("yesBtn");
   const toast = document.getElementById("toast");
-  const btnRow = document.getElementById("btnRow");
 
-  const noTaunts = [
+  const taunts = [
     "Nice try 😌",
-    "Not happening 😂",
+    "That’s the wrong answer 😂",
     "Sury cutie… c’mon 😏",
-    "Your cursor is too slow 😭",
-    "That’s the wrong answer 🙃",
-    "Destiny said NO to 'No' 💅"
+    "Nope nope nope 🙃",
+    "Destiny says YES 💅",
+    "Your cursor is too slow 😭"
   ];
 
-  function moveNoButton(){
-    const pad = 18;
-    const rect = noBtn.getBoundingClientRect();
-    const maxX = window.innerWidth - rect.width - pad;
-    const maxY = window.innerHeight - rect.height - pad;
+  // Keep "No" INSIDE btnArea always
+  function moveNo(){
+    const area = btnArea.getBoundingClientRect();
+    const btn = noBtn.getBoundingClientRect();
+    const pad = 8;
 
-    // keep it roughly around the card area for the joke, but still evasive
-    const cardRect = document.getElementById("card").getBoundingClientRect();
-    const zone = {
-      x1: Math.max(pad, cardRect.left - 60),
-      x2: Math.min(maxX, cardRect.right - rect.width + 60),
-      y1: Math.max(pad, cardRect.top - 40),
-      y2: Math.min(maxY, cardRect.bottom - rect.height + 80),
-    };
+    const maxX = area.width - btn.width - pad;
+    const maxY = area.height - btn.height - pad;
 
-    const x = zone.x1 + Math.random() * Math.max(20, (zone.x2 - zone.x1));
-    const y = zone.y1 + Math.random() * Math.max(20, (zone.y2 - zone.y1));
+    const x = pad + Math.random() * Math.max(pad, maxX);
+    const y = pad + Math.random() * Math.max(pad, maxY);
 
+    // position relative to btnArea
     noBtn.style.left = x + "px";
-    noBtn.style.top = y + "px";
+    noBtn.style.top  = y + "px";
 
-    toast.textContent = noTaunts[Math.floor(Math.random()*noTaunts.length)];
+    toast.textContent = taunts[Math.floor(Math.random()*taunts.length)];
   }
 
-  // Dodge on hover AND when mouse gets close (level 8 dramatic)
-  noBtn.addEventListener("mouseover", moveNoButton);
-  window.addEventListener("mousemove", (e) => {
+  // Grace period so it doesn't vanish instantly
+  const startTime = Date.now();
+  const GRACE_MS = 1200;
+
+  // Dodge on hover (desktop)
+  noBtn.addEventListener("mouseenter", () => {
+    if (Date.now() - startTime < GRACE_MS) return;
+    moveNo();
+  });
+
+  // Dodge when finger taps (mobile)
+  noBtn.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    if (Date.now() - startTime < GRACE_MS) return;
+    moveNo();
+  }, {passive:false});
+
+  // Also dodge when pointer gets close (but only after grace)
+  btnArea.addEventListener("mousemove", (e) => {
+    if (Date.now() - startTime < GRACE_MS) return;
     const r = noBtn.getBoundingClientRect();
     const cx = r.left + r.width/2;
     const cy = r.top + r.height/2;
     const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
-    if(dist < 110) moveNoButton();
+    if (dist < 90) moveNo();
   });
 
-  // ---------- Confetti / fireworks FX ----------
+  // Start No on the right (visible), then allow dodging
+  // (no immediate teleport)
+  toast.textContent = "Choose wisely 😇";
+
+  // ----- Yes flow + confetti -----
+  const overlay = document.getElementById("overlay");
+  const confirmYes = document.getElementById("confirmYes");
+  const closeModal = document.getElementById("closeModal");
+
+  yesBtn.addEventListener("click", () => overlay.style.display = "flex");
+  closeModal.addEventListener("click", () => {
+    overlay.style.display = "none";
+    toast.textContent = "I’ll be right here when you’re ready 😌";
+  });
+
+  // Confetti canvas
   const canvas = document.getElementById("fx");
   const ctx = canvas.getContext("2d");
-  let W, H;
+  let W, H, dpr;
+
   function resize(){
-    W = canvas.width = window.innerWidth * devicePixelRatio;
-    H = canvas.height = window.innerHeight * devicePixelRatio;
-    ctx.scale(devicePixelRatio, devicePixelRatio);
+    dpr = window.devicePixelRatio || 1;
+    W = canvas.width = Math.floor(window.innerWidth * dpr);
+    H = canvas.height = Math.floor(window.innerHeight * dpr);
+    canvas.style.width = window.innerWidth + "px";
+    canvas.style.height = window.innerHeight + "px";
+    ctx.setTransform(dpr,0,0,dpr,0,0);
   }
   resize();
-  window.addEventListener("resize", () => location.reload()); // simple + reliable for positioning
+  window.addEventListener("resize", resize);
 
-  const particles = [];
-  function burst(x,y,count=160){
+  const parts = [];
+  function burst(x,y,count=180){
     for(let i=0;i<count;i++){
-      const angle = Math.random()*Math.PI*2;
-      const speed = 2 + Math.random()*6;
-      particles.push({
+      const a = Math.random()*Math.PI*2;
+      const s = 2 + Math.random()*6;
+      parts.push({
         x, y,
-        vx: Math.cos(angle)*speed,
-        vy: Math.sin(angle)*speed - 2,
+        vx: Math.cos(a)*s,
+        vy: Math.sin(a)*s - 2,
         g: 0.08 + Math.random()*0.06,
-        life: 90 + Math.random()*50,
+        life: 90 + Math.random()*60,
         size: 2 + Math.random()*3,
         rot: Math.random()*Math.PI*2,
         vr: (Math.random()-.5)*0.25,
-        shape: Math.random() < 0.25 ? "heart" : "rect"
+        hue: Math.random()*360
       });
     }
   }
 
-  function drawHeart(x,y,s){
-    ctx.save();
-    ctx.translate(x,y);
-    ctx.scale(s,s);
-    ctx.beginPath();
-    ctx.moveTo(0, 0.35);
-    ctx.bezierCurveTo(0, -0.1, -0.5, -0.1, -0.5, 0.2);
-    ctx.bezierCurveTo(-0.5, 0.55, 0, 0.85, 0, 1);
-    ctx.bezierCurveTo(0, 0.85, 0.5, 0.55, 0.5, 0.2);
-    ctx.bezierCurveTo(0.5, -0.1, 0, -0.1, 0, 0.35);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-  }
-
-  function anim(){
-    ctx.clearRect(0,0,window.innerWidth, window.innerHeight);
-    for(let i=particles.length-1;i>=0;i--){
-      const p = particles[i];
+  function tick(){
+    ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+    for(let i=parts.length-1;i>=0;i--){
+      const p = parts[i];
       p.vy += p.g;
       p.x += p.vx;
       p.y += p.vy;
       p.rot += p.vr;
       p.life--;
 
-      const alpha = Math.max(0, Math.min(1, p.life/80));
-      ctx.globalAlpha = alpha;
+      const a = Math.max(0, Math.min(1, p.life/80));
+      ctx.globalAlpha = a;
+      ctx.fillStyle = `hsl(${p.hue} 90% 60%)`;
 
-      // no explicit colors requested? keep it varied but still romantic.
-      // We’ll use random hue per particle without hardcoding specific named colors.
-      // (This stays within the “don’t specify specific colors” constraint for plotting tools—not relevant here.)
-      ctx.fillStyle = `hsl(${(p.x+p.y)%360} 90% 60%)`;
+      ctx.save();
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.rot);
+      ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+      ctx.restore();
 
-      if(p.shape === "heart"){
-        drawHeart(p.x, p.y, p.size*0.12);
-      } else {
-        ctx.save();
-        ctx.translate(p.x,p.y);
-        ctx.rotate(p.rot);
-        ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
-        ctx.restore();
-      }
-
-      if(p.life <= 0) particles.splice(i,1);
+      if(p.life <= 0) parts.splice(i,1);
     }
     ctx.globalAlpha = 1;
-    requestAnimationFrame(anim);
+    requestAnimationFrame(tick);
   }
-  anim();
-
-  // ---------- Yes flow (fake-out modal + celebration) ----------
-  const overlay = document.getElementById("overlay");
-  const confirmYes = document.getElementById("confirmYes");
-  const closeModal = document.getElementById("closeModal");
-
-  yesBtn.addEventListener("click", () => {
-    overlay.style.display = "flex";
-    // little pre-celebration
-    const r = yesBtn.getBoundingClientRect();
-    burst(r.left + r.width/2, r.top + r.height/2, 90);
-  });
-
-  closeModal.addEventListener("click", () => {
-    overlay.style.display = "none";
-    toast.textContent = "Take your time… but you know the answer 😌";
-  });
+  tick();
 
   confirmYes.addEventListener("click", () => {
     overlay.style.display = "none";
     toast.textContent = "YAYYYY 💖 I LOVE YOU, SURY CUTIE!!!";
 
-    // big celebration bursts
+    // celebratory bursts
     burst(window.innerWidth*0.25, window.innerHeight*0.35, 220);
     burst(window.innerWidth*0.75, window.innerHeight*0.35, 220);
-    burst(window.innerWidth*0.50, window.innerHeight*0.45, 260);
+    burst(window.innerWidth*0.50, window.innerHeight*0.50, 260);
 
-    // disable buttons so the moment "locks in"
+    // lock it in
     noBtn.style.display = "none";
     yesBtn.textContent = "LOCKED IN 💘";
     yesBtn.style.transform = "scale(1.05)";
   });
-
-  // Place the NO button initially in a slightly annoying position
-  setTimeout(moveNoButton, 400);
 </script>
 </body>
 </html>
+
