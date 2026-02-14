@@ -15,6 +15,7 @@
       --text:#1f1f1f;
     }
     *{box-sizing:border-box}
+
     body{
       margin:0;
       height:100vh;
@@ -35,7 +36,6 @@
     .hearts{position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:0;}
     .heart{
       position:absolute;
-      font-size:18px;
       opacity:.9;
       filter: drop-shadow(0 10px 10px rgba(0,0,0,.12));
       animation: floatUp linear forwards;
@@ -47,9 +47,9 @@
       100%{transform:translateY(-120vh) scale(1.25); opacity:0;}
     }
 
-    /* Main card */
+    /* Card */
     .card{
-      width:min(820px, 96vw);
+      width:min(860px, 96vw);
       background:var(--card);
       border-radius:26px;
       padding:26px 20px 18px;
@@ -84,13 +84,14 @@
       opacity:.9;
     }
 
-    /* Button row inside the card (YES stays here) */
+    /* Buttons (NORMAL FLOW) */
     .row{
       width:min(520px, 92%);
       margin: 14px auto 0;
       display:flex;
       justify-content:center;
       gap:14px;
+      flex-wrap:wrap;
     }
 
     .btn{
@@ -105,30 +106,31 @@
       -webkit-tap-highlight-color: transparent;
       white-space:nowrap;
     }
+    .btn:active{transform: translateY(1px) scale(.99);}
+
     #yesBtn{
       background: linear-gradient(135deg, var(--pink), var(--rose));
       color:#fff;
       box-shadow:0 12px 26px rgba(255,45,85,.35);
     }
     #yesBtn:hover{transform: translateY(-2px) scale(1.02);}
-    #yesBtn:active{transform: translateY(1px) scale(.99);}
 
-    /* NO is floating on the page so it can jump sides */
+    /* NO floats on the page */
     #noBtn{
       position: fixed;
-      left: calc(50% + 120px);
+      left: 70%;
       top: 55%;
-      transform: translate(-50%,-50%) scale(1);
       background: rgba(40,40,40,.10);
       color:#222;
       border:1px solid rgba(0,0,0,.10);
       box-shadow:0 12px 26px rgba(0,0,0,.16);
       z-index:3;
+      transform-origin: center;
     }
 
     .toast{
       margin-top:12px;
-      min-height:28px;
+      min-height:30px;
       font-size: clamp(16px, 2vw, 20px);
       font-weight:900;
       color:var(--pink);
@@ -139,7 +141,7 @@
       opacity:.75;
     }
 
-    /* Modal (fixed layout so buttons never overlap text) */
+    /* Modal (fixed layout) */
     .overlay{
       position:fixed; inset:0;
       background: rgba(0,0,0,.55);
@@ -164,24 +166,36 @@
       line-height:1.05;
     }
     .modal p{
-      margin:0 0 18px;
+      margin:0;
       font-size:18px;
       opacity:.92;
-      line-height:1.4;
+      line-height:1.45;
     }
-    .actions{
+    .modal .actions{
+      margin-top:18px;         /* key fix */
       display:flex;
       gap:12px;
       justify-content:center;
       flex-wrap:wrap;
-      margin-top:6px;
     }
     .ghost{
       background:#f2f2f2;
       color:#222;
+      box-shadow:none;
+      border:1px solid rgba(0,0,0,.08);
     }
 
     canvas#fx{position:fixed; inset:0; pointer-events:none; z-index:12;}
+
+    /* optional: quick shake */
+    @keyframes shake {
+      0%{transform:translateX(0) scale(var(--s,1))}
+      25%{transform:translateX(-6px) scale(var(--s,1))}
+      50%{transform:translateX(6px) scale(var(--s,1))}
+      75%{transform:translateX(-4px) scale(var(--s,1))}
+      100%{transform:translateX(0) scale(var(--s,1))}
+    }
+    .shake{ animation: shake .22s linear; }
   </style>
 </head>
 
@@ -192,12 +206,11 @@
   <div class="card">
     <div class="badge">💘 For <span>Sury</span> (aka <span>sury cutie</span>)</div>
 
-    <h1>Will you be my Valentine, <span style="color:var(--pink)">Sury Cutie</span>? 💖</h1>
+    <h1>Will you be my Valentine, <span style="color:var(--pink)">Sury</span>? 💖</h1>
     <p class="sub">I’m not asking… I’m presenting destiny 😌</p>
 
     <div class="row">
       <button class="btn" id="yesBtn">YES 💘</button>
-      <!-- (No button floats on the page; it’s not inside the row) -->
     </div>
 
     <div class="toast" id="toast">Go ahead… you can click “No” a few times 😇</div>
@@ -206,7 +219,7 @@
 
   <button class="btn" id="noBtn">No 🙄</button>
 
-  <div class="overlay" id="overlay">
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true">
     <div class="modal">
       <h2>Wait—are you REALLY sure? 😳</h2>
       <p>
@@ -223,7 +236,7 @@
   </div>
 
 <script>
-  // Floating hearts
+  // Hearts
   const hearts = document.getElementById("hearts");
   const heartChars = ["💖","💘","💗","💕","💞","💝"];
   function spawnHeart(){
@@ -246,23 +259,21 @@
   const toast = document.getElementById("toast");
   const hint = document.getElementById("hint");
 
-  // “No” behavior: clickable a few times, then becomes slippery
-  const allowedNoClicks = 4;   // set 3 or 4
+  // NO logic: 4 clicks allowed; each click shrinks + jumps across screen
+  const allowedNoClicks = 4;
   let noClicks = 0;
   let slippery = false;
 
-  // Shrink settings
-  const minScale = 0.55;
-  const shrinkFactor = 0.85;
   let scale = 1;
+  const shrinkFactor = 0.82;
+  const minScale = 0.50;
 
   const noLines = [
     "Okayyy 😏 noted…",
     "Interesting choice 👀",
     "You sure about that? 😌",
-    "Last chance… 😈",
+    "Last chance… 😈"
   ];
-
   const taunts = [
     "Nice try 😌",
     "Nope 😂",
@@ -273,44 +284,48 @@
 
   function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
 
-  // Jump from side to side of the SCREEN
-  function jumpNo(sideOverride){
-    const pad = 16;
+  function jumpAcrossScreen(forceSide){
+    const pad = 14;
     const rect = noBtn.getBoundingClientRect();
 
-    // alternate sides (left/right)
-    const side = sideOverride ?? ((noClicks % 2 === 0) ? "left" : "right");
-
+    // sides: left / right
+    const side = forceSide ?? (Math.random() < 0.5 ? "left" : "right");
     const x = (side === "left")
       ? pad
-      : window.innerWidth - rect.width - pad;
+      : (window.innerWidth - rect.width - pad);
 
-    // random y but keep on-screen
     const y = pad + Math.random() * (window.innerHeight - rect.height - pad*2);
 
     noBtn.style.left = x + "px";
-    noBtn.style.top = y + "px";
+    noBtn.style.top  = y + "px";
   }
 
   function applyScale(){
-    noBtn.style.transform = `translate(0,0) scale(${scale})`;
+    noBtn.style.setProperty("--s", scale);
+    // keep translate out of it so shake works cleanly
+    noBtn.style.transform = `scale(${scale})`;
   }
 
-  // Keep it visible on first load
-  jumpNo("right");
+  // initial placement: right side
+  jumpAcrossScreen("right");
   applyScale();
 
-  // Clicking NO
+  // click NO: shrink + jump side-to-side
   noBtn.addEventListener("click", () => {
     noClicks++;
 
-    // shrink every click
+    // shrink
     scale = clamp(scale * shrinkFactor, minScale, 1);
     applyScale();
 
-    // always jump sides on click
+    // jump to opposite side each click
     const side = (noClicks % 2 === 1) ? "left" : "right";
-    jumpNo(side);
+    jumpAcrossScreen(side);
+
+    // quick shake for drama
+    noBtn.classList.remove("shake");
+    void noBtn.offsetWidth;
+    noBtn.classList.add("shake");
 
     if (!slippery) {
       toast.textContent = noLines[Math.min(noClicks-1, noLines.length-1)];
@@ -318,24 +333,20 @@
       if (noClicks >= allowedNoClicks) {
         slippery = true;
         hint.textContent = "Tip: Okay… now the “No” button stopped cooperating.";
-        toast.textContent = "Alright… nice try 😌";
+        toast.textContent = "Nice try 😌";
       }
       return;
     }
 
-    // After it’s slippery, clicking it becomes basically pointless
     toast.textContent = "Nice try 😌";
   });
 
-  // After slippery: dodge on hover/tap too (but still stays on screen)
+  // after slippery: dodge on hover/tap
   function dodge(){
     if (!slippery) return;
     toast.textContent = taunts[Math.floor(Math.random()*taunts.length)];
-    // jump to the opposite side quickly
-    const side = (Math.random() < 0.5) ? "left" : "right";
-    jumpNo(side);
+    jumpAcrossScreen();
   }
-
   noBtn.addEventListener("mouseenter", dodge);
   noBtn.addEventListener("touchstart", (e) => {
     if (!slippery) return;
@@ -357,7 +368,6 @@
   // Confetti
   const canvas = document.getElementById("fx");
   const ctx = canvas.getContext("2d");
-
   function resize(){
     const dpr = window.devicePixelRatio || 1;
     canvas.width = Math.floor(window.innerWidth * dpr);
@@ -370,7 +380,7 @@
   window.addEventListener("resize", resize);
 
   const parts = [];
-  function burst(x,y,count=200){
+  function burst(x,y,count=220){
     for(let i=0;i<count;i++){
       const a = Math.random()*Math.PI*2;
       const s = 2 + Math.random()*6;
@@ -417,9 +427,9 @@
     overlay.style.display = "none";
     toast.textContent = "YAYYYY 💖 I LOVE YOU, SURY CUTIE!!!";
 
-    burst(window.innerWidth*0.25, window.innerHeight*0.35, 220);
-    burst(window.innerWidth*0.75, window.innerHeight*0.35, 220);
-    burst(window.innerWidth*0.50, window.innerHeight*0.50, 260);
+    burst(window.innerWidth*0.25, window.innerHeight*0.35, 240);
+    burst(window.innerWidth*0.75, window.innerHeight*0.35, 240);
+    burst(window.innerWidth*0.50, window.innerHeight*0.52, 280);
 
     noBtn.style.display = "none";
     yesBtn.textContent = "LOCKED IN 💘";
@@ -427,6 +437,7 @@
 </script>
 </body>
 </html>
+
 
 
 
