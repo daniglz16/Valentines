@@ -30,7 +30,6 @@
       padding:18px;
     }
 
-    /* Floating hearts */
     .hearts{position:fixed; inset:0; pointer-events:none; overflow:hidden;}
     .heart{
       position:absolute;
@@ -46,7 +45,6 @@
       100%{transform:translateY(-120vh) scale(1.25); opacity:0;}
     }
 
-    /* Card */
     .card{
       width:min(760px, 96vw);
       background:var(--card);
@@ -82,10 +80,233 @@
       opacity:.9;
     }
 
-    /* Safe button arena (No can only move inside here) */
     .arena{
       width:min(520px, 92%);
-      height: 110px;
+      height: 120px;
       margin: 14px auto 0;
       border-radius:20px;
-      backgroun
+      background: rgba(255,255,255,.55);
+      border:1px dashed rgba(0,0,0,.10);
+      position:relative;
+      overflow:hidden;
+    }
+
+    button{
+      border:none;
+      padding:14px 22px;
+      font-size:18px;
+      border-radius:16px;
+      cursor:pointer;
+      font-weight:900;
+      transition: transform .15s ease, box-shadow .15s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      position:absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      white-space:nowrap;
+    }
+    #yesBtn{
+      left: 18px;
+      background: linear-gradient(135deg, var(--pink), var(--rose));
+      color:#fff;
+      box-shadow:0 12px 26px rgba(255,45,85,.35);
+    }
+    #yesBtn:hover{transform: translateY(-52%) scale(1.02);}
+    #yesBtn:active{transform: translateY(-48%) scale(.99);}
+
+    #noBtn{
+      right: 18px;
+      background: rgba(40,40,40,.10);
+      color:#222;
+      border:1px solid rgba(0,0,0,.08);
+      box-shadow:0 12px 26px rgba(0,0,0,.12);
+    }
+
+    .toast{
+      margin-top:12px;
+      min-height:28px;
+      font-size: clamp(16px, 2vw, 20px);
+      font-weight:900;
+      color:var(--pink);
+    }
+    .hint{
+      margin-top:6px;
+      font-size: 13px;
+      opacity:.75;
+    }
+
+    .overlay{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:50;
+    }
+    .modal{
+      width:min(740px, 96vw);
+      background:#fff;
+      border-radius:26px;
+      padding:24px;
+      text-align:center;
+      box-shadow:0 18px 80px rgba(0,0,0,.38);
+    }
+    .modal h2{
+      margin:0 0 10px;
+      font-size: clamp(24px, 4vw, 44px);
+      color:var(--pink);
+    }
+    .modal p{
+      margin:0 0 18px;
+      font-size:18px;
+      opacity:.92;
+    }
+    .actions{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+    .ghost{background:#f2f2f2; color:#222;}
+
+    canvas#fx{position:fixed; inset:0; pointer-events:none; z-index:60;}
+  </style>
+</head>
+<body>
+  <div class="hearts" id="hearts"></div>
+  <canvas id="fx"></canvas>
+
+  <div class="card">
+    <div class="badge">💘 For <span>Sury</span> (aka <span>sury cutie</span>)</div>
+    <h1>Will you be my Valentine, <span style="color:var(--pink)">Sury Cutie</span>? 💖</h1>
+    <p class="sub">I’m not asking… I’m presenting destiny 😌</p>
+
+    <div class="arena" id="arena">
+      <button id="yesBtn">YES 💘</button>
+      <button id="noBtn">No 🙄</button>
+    </div>
+
+    <div class="toast" id="toast">Go ahead… pick “No” if you dare 😇</div>
+    <div class="hint" id="hint">Tip: You get a few “No” clicks… then it gets slippery.</div>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h2>Wait—are you REALLY sure? 😳</h2>
+      <p>Sury cutie… clicking “Yes” may cause permanent butterflies, nonstop smiling, and unlimited cuddles.</p>
+      <div class="actions">
+        <button id="confirmYes" style="background:linear-gradient(135deg,var(--pink),var(--rose));color:#fff;border:none;padding:14px 22px;font-size:18px;border-radius:16px;font-weight:900;cursor:pointer;">
+          YES YES YES 💖
+        </button>
+        <button id="closeModal" class="ghost" style="border:none;padding:14px 22px;font-size:18px;border-radius:16px;font-weight:900;cursor:pointer;">
+          Let me think 🤔
+        </button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Hearts
+  const hearts = document.getElementById("hearts");
+  const heartChars = ["💖","💘","💗","💕","💞","💝"];
+  function spawnHeart(){
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
+    h.style.fontSize = (14 + Math.random()*26) + "px";
+    h.style.left = (Math.random()*100) + "vw";
+    h.style.bottom = (-20 - Math.random()*30) + "px";
+    h.style.animationDuration = (5 + Math.random()*4) + "s";
+    hearts.appendChild(h);
+    setTimeout(() => h.remove(), 9500);
+  }
+  for(let i=0;i<18;i++) setTimeout(spawnHeart, i*120);
+  setInterval(spawnHeart, 190);
+
+  // Buttons + No-click logic
+  const arena = document.getElementById("arena");
+  const noBtn = document.getElementById("noBtn");
+  const yesBtn = document.getElementById("yesBtn");
+  const toast = document.getElementById("toast");
+  const hint = document.getElementById("hint");
+
+  // She can click "No" a few times first
+  const allowedNoClicks = 4;      // change to 3 or 4
+  let noClicks = 0;
+  let noIsSlippery = false;
+
+  const noLines = [
+    "Okayyy 😏 noted…",
+    "Interesting choice 👀",
+    "You sure about that? 😌",
+    "Last chance… 😈"
+  ];
+
+  const taunts = [
+    "Nice try 😌",
+    "Nope 😂",
+    "Denied 💅",
+    "Destiny says YES 💖",
+    "Too slow 😭"
+  ];
+
+  function randomSpot(){
+    const a = arena.getBoundingClientRect();
+    const b = noBtn.getBoundingClientRect();
+    const pad = 10;
+
+    const maxX = a.width - b.width - pad;
+    const minX = pad;
+
+    // keep it away from the YES button area
+    const avoidYesZone = 170;
+    let x;
+    for(let tries=0; tries<25; tries++){
+      x = minX + Math.random() * Math.max(1, maxX - minX);
+      if (x > avoidYesZone) break;
+    }
+    const y = pad + Math.random() * Math.max(1, (a.height - b.height - pad));
+    return { x, y };
+  }
+
+  function moveNo(){
+    const {x, y} = randomSpot();
+    noBtn.style.left = x + "px";
+    noBtn.style.top  = y + "px";
+  }
+
+  // Clicking NO (works 3–4 times)
+  noBtn.addEventListener("click", (e) => {
+    if (!noIsSlippery) {
+      noClicks++;
+      toast.textContent = noLines[Math.min(noClicks-1, noLines.length-1)];
+
+      if (noClicks >= allowedNoClicks) {
+        noIsSlippery = true;
+        hint.textContent = "Tip: Okay… now the “No” button stopped cooperating.";
+        toast.textContent = "Alright… you asked for this 😌";
+      }
+      return;
+    }
+
+    // Once slippery, she basically can't land it
+    toast.textContent = "Nice try 😌";
+    moveNo();
+  });
+
+  // Once it becomes slippery, it dodges on hover/tap
+  noBtn.addEventListener("mouseenter", () => {
+    if (!noIsSlippery) return;
+    toast.textContent = taunts[Math.floor(Math.random()*taunts.length)];
+    moveNo();
+  });
+
+  noBtn.addEventListener("touchstart", (e) => {
+    if (!noIsSlippery) return;
+    e.preventDefault();
+    toast.textContent = taunts[Math.floor(Math.random()*taunts.length)];
+    moveNo();
+  }, {passive:false});
+
+  // Yes modal
+  const overlay = document.getElementById("overlay");
+  const confirmYes = document.getElementById("confirmYes");
+  const closeModal
+
