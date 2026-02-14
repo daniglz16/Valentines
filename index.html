@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>💖 Valentine for Sury 💖</title>
   <style>
     :root{
@@ -11,7 +11,7 @@
       --bg1:#ff9a9e;
       --bg2:#fad0c4;
       --card:#ffffffee;
-      --text:#2a2a2a;
+      --text:#1f1f1f;
     }
     *{box-sizing:border-box}
     body{
@@ -41,17 +41,17 @@
       user-select:none;
     }
     @keyframes floatUp{
-      0%{transform:translateY(20px) scale(.9); opacity:0;}
+      0%{transform:translateY(25px) scale(.9); opacity:0;}
       10%{opacity:.95;}
       100%{transform:translateY(-120vh) scale(1.25); opacity:0;}
     }
 
     /* Card */
     .card{
-      width:min(720px, 96vw);
+      width:min(760px, 96vw);
       background:var(--card);
       border-radius:26px;
-      padding:26px 20px 20px;
+      padding:26px 20px 18px;
       box-shadow:0 18px 60px rgba(0,0,0,.22);
       backdrop-filter: blur(10px);
       border:1px solid rgba(255,255,255,.45);
@@ -66,311 +66,26 @@
       border-radius:999px;
       background: rgba(255,45,85,.12);
       border:1px solid rgba(255,45,85,.18);
-      font-weight:700;
+      font-weight:800;
       margin-bottom:14px;
     }
     .badge span{color:var(--pink)}
     h1{
-      margin:6px 0 10px;
-      font-size: clamp(28px, 4.5vw, 48px);
+      margin:8px 0 10px;
+      font-size: clamp(26px, 4.5vw, 48px);
       line-height:1.05;
       letter-spacing:-0.02em;
     }
     .sub{
-      margin:0 0 18px;
+      margin:0 0 16px;
       font-size: clamp(14px, 2vw, 18px);
       opacity:.9;
     }
 
-    /* Buttons area */
-    .btnArea{
-      position:relative;
+    /* Safe button arena (No can only move inside here) */
+    .arena{
       width:min(520px, 92%);
-      margin: 16px auto 0;
-      height: 86px;            /* dedicated area so No can dodge safely */
-    }
-    .btn{
-      border:none;
-      padding:14px 22px;
-      font-size:18px;
-      border-radius:16px;
-      cursor:pointer;
-      font-weight:900;
-      transition: transform .15s ease, box-shadow .15s ease;
-      user-select:none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    #yesBtn{
-      position:absolute;
-      left: 10px;
-      top: 16px;
-      background: linear-gradient(135deg, var(--pink), var(--rose));
-      color:#fff;
-      box-shadow:0 12px 26px rgba(255,45,85,.35);
-    }
-    #yesBtn:hover{transform: translateY(-2px) scale(1.02);}
-    #yesBtn:active{transform: translateY(1px) scale(.99);}
-
-    #noBtn{
-      position:absolute;
-      right: 10px;
-      top: 16px;
-      background: rgba(40,40,40,.10);
-      color:#222;
-      border:1px solid rgba(0,0,0,.08);
-      box-shadow:0 12px 26px rgba(0,0,0,.12);
-    }
-
-    .toast{
-      margin-top:14px;
-      min-height:28px;
-      font-size: clamp(16px, 2vw, 20px);
-      font-weight:900;
-      color:var(--pink);
-    }
-    .hint{
-      margin-top:8px;
-      font-size: 13px;
-      opacity:.75;
-    }
-
-    /* Modal */
-    .overlay{
-      position:fixed; inset:0;
-      background: rgba(0,0,0,.55);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-      z-index:50;
-    }
-    .modal{
-      width:min(740px, 96vw);
-      background:#fff;
-      border-radius:26px;
-      padding:24px;
-      text-align:center;
-      box-shadow:0 18px 80px rgba(0,0,0,.38);
-    }
-    .modal h2{
-      margin:0 0 10px;
-      font-size: clamp(26px, 4vw, 44px);
-      color:var(--pink);
-    }
-    .modal p{
-      margin:0 0 18px;
-      font-size:18px;
-      opacity:.92;
-    }
-    .actions{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
-    .ghost{background:#f2f2f2; color:#222;}
-
-    /* Confetti canvas */
-    canvas#fx{position:fixed; inset:0; pointer-events:none; z-index:60;}
-  </style>
-</head>
-<body>
-  <div class="hearts" id="hearts"></div>
-  <canvas id="fx"></canvas>
-
-  <div class="card" id="card">
-    <div class="badge">💘 For <span>Sury</span> (aka <span>sury cutie</span>)</div>
-
-    <h1>Will you be my Valentine, <span style="color:var(--pink)">Sury Cutie</span>? 💖</h1>
-    <p class="sub">I’m not asking… I’m presenting destiny 😌</p>
-
-    <div class="btnArea" id="btnArea">
-      <button class="btn" id="yesBtn">YES 💘</button>
-      <button class="btn" id="noBtn">No 🙄</button>
-    </div>
-
-    <div class="toast" id="toast"></div>
-    <div class="hint">Tip: “No” gets slippery. Try anyway.</div>
-  </div>
-
-  <div class="overlay" id="overlay">
-    <div class="modal">
-      <h2>Wait—are you REALLY sure? 😳</h2>
-      <p>Sury cutie… clicking “Yes” may cause permanent butterflies, nonstop smiling, and unlimited cuddles.</p>
-      <div class="actions">
-        <button class="btn" id="confirmYes" style="background:linear-gradient(135deg,var(--pink),var(--rose));color:#fff;">YES YES YES 💖</button>
-        <button class="btn ghost" id="closeModal">Let me think 🤔</button>
-      </div>
-    </div>
-  </div>
-
-<script>
-  // ----- Hearts -----
-  const hearts = document.getElementById("hearts");
-  const heartChars = ["💖","💘","💗","💕","💞","💝"];
-  function spawnHeart(){
-    const h = document.createElement("div");
-    h.className = "heart";
-    h.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
-    const size = 14 + Math.random()*26;
-    h.style.fontSize = size + "px";
-    h.style.left = (Math.random()*100) + "vw";
-    h.style.bottom = (-20 - Math.random()*30) + "px";
-    h.style.animationDuration = (5 + Math.random()*4) + "s";
-    hearts.appendChild(h);
-    setTimeout(() => h.remove(), 9500);
-  }
-  for(let i=0;i<18;i++) setTimeout(spawnHeart, i*120);
-  setInterval(spawnHeart, 180);
-
-  // ----- Buttons -----
-  const btnArea = document.getElementById("btnArea");
-  const noBtn = document.getElementById("noBtn");
-  const yesBtn = document.getElementById("yesBtn");
-  const toast = document.getElementById("toast");
-
-  const taunts = [
-    "Nice try 😌",
-    "That’s the wrong answer 😂",
-    "Sury cutie… c’mon 😏",
-    "Nope nope nope 🙃",
-    "Destiny says YES 💅",
-    "Your cursor is too slow 😭"
-  ];
-
-  // Keep "No" INSIDE btnArea always
-  function moveNo(){
-    const area = btnArea.getBoundingClientRect();
-    const btn = noBtn.getBoundingClientRect();
-    const pad = 8;
-
-    const maxX = area.width - btn.width - pad;
-    const maxY = area.height - btn.height - pad;
-
-    const x = pad + Math.random() * Math.max(pad, maxX);
-    const y = pad + Math.random() * Math.max(pad, maxY);
-
-    // position relative to btnArea
-    noBtn.style.left = x + "px";
-    noBtn.style.top  = y + "px";
-
-    toast.textContent = taunts[Math.floor(Math.random()*taunts.length)];
-  }
-
-  // Grace period so it doesn't vanish instantly
-  const startTime = Date.now();
-  const GRACE_MS = 1200;
-
-  // Dodge on hover (desktop)
-  noBtn.addEventListener("mouseenter", () => {
-    if (Date.now() - startTime < GRACE_MS) return;
-    moveNo();
-  });
-
-  // Dodge when finger taps (mobile)
-  noBtn.addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    if (Date.now() - startTime < GRACE_MS) return;
-    moveNo();
-  }, {passive:false});
-
-  // Also dodge when pointer gets close (but only after grace)
-  btnArea.addEventListener("mousemove", (e) => {
-    if (Date.now() - startTime < GRACE_MS) return;
-    const r = noBtn.getBoundingClientRect();
-    const cx = r.left + r.width/2;
-    const cy = r.top + r.height/2;
-    const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
-    if (dist < 90) moveNo();
-  });
-
-  // Start No on the right (visible), then allow dodging
-  // (no immediate teleport)
-  toast.textContent = "Choose wisely 😇";
-
-  // ----- Yes flow + confetti -----
-  const overlay = document.getElementById("overlay");
-  const confirmYes = document.getElementById("confirmYes");
-  const closeModal = document.getElementById("closeModal");
-
-  yesBtn.addEventListener("click", () => overlay.style.display = "flex");
-  closeModal.addEventListener("click", () => {
-    overlay.style.display = "none";
-    toast.textContent = "I’ll be right here when you’re ready 😌";
-  });
-
-  // Confetti canvas
-  const canvas = document.getElementById("fx");
-  const ctx = canvas.getContext("2d");
-  let W, H, dpr;
-
-  function resize(){
-    dpr = window.devicePixelRatio || 1;
-    W = canvas.width = Math.floor(window.innerWidth * dpr);
-    H = canvas.height = Math.floor(window.innerHeight * dpr);
-    canvas.style.width = window.innerWidth + "px";
-    canvas.style.height = window.innerHeight + "px";
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-  }
-  resize();
-  window.addEventListener("resize", resize);
-
-  const parts = [];
-  function burst(x,y,count=180){
-    for(let i=0;i<count;i++){
-      const a = Math.random()*Math.PI*2;
-      const s = 2 + Math.random()*6;
-      parts.push({
-        x, y,
-        vx: Math.cos(a)*s,
-        vy: Math.sin(a)*s - 2,
-        g: 0.08 + Math.random()*0.06,
-        life: 90 + Math.random()*60,
-        size: 2 + Math.random()*3,
-        rot: Math.random()*Math.PI*2,
-        vr: (Math.random()-.5)*0.25,
-        hue: Math.random()*360
-      });
-    }
-  }
-
-  function tick(){
-    ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
-    for(let i=parts.length-1;i>=0;i--){
-      const p = parts[i];
-      p.vy += p.g;
-      p.x += p.vx;
-      p.y += p.vy;
-      p.rot += p.vr;
-      p.life--;
-
-      const a = Math.max(0, Math.min(1, p.life/80));
-      ctx.globalAlpha = a;
-      ctx.fillStyle = `hsl(${p.hue} 90% 60%)`;
-
-      ctx.save();
-      ctx.translate(p.x,p.y);
-      ctx.rotate(p.rot);
-      ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
-      ctx.restore();
-
-      if(p.life <= 0) parts.splice(i,1);
-    }
-    ctx.globalAlpha = 1;
-    requestAnimationFrame(tick);
-  }
-  tick();
-
-  confirmYes.addEventListener("click", () => {
-    overlay.style.display = "none";
-    toast.textContent = "YAYYYY 💖 I LOVE YOU, SURY CUTIE!!!";
-
-    // celebratory bursts
-    burst(window.innerWidth*0.25, window.innerHeight*0.35, 220);
-    burst(window.innerWidth*0.75, window.innerHeight*0.35, 220);
-    burst(window.innerWidth*0.50, window.innerHeight*0.50, 260);
-
-    // lock it in
-    noBtn.style.display = "none";
-    yesBtn.textContent = "LOCKED IN 💘";
-    yesBtn.style.transform = "scale(1.05)";
-  });
-</script>
-</body>
-</html>
-
+      height: 110px;
+      margin: 14px auto 0;
+      border-radius:20px;
+      backgroun
